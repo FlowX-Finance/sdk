@@ -6,13 +6,23 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/shared/sdk",
-        "main": "shared/sdk/src/index.ts",
         "tsConfig": "shared/sdk/tsconfig.lib.json",
-        "assets": ["shared/sdk/*.md"]
+        "project": "shared/sdk/package.json",
+        "entryFile": "shared/sdk/src/index.ts",
+        "compiler": "tsc",
+        "format": ["esm", "cjs"],
+        "sourceMap": true,
+        "assets": [
+          {
+            "glob": "shared/sdk/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
       }
     },
     "lint": {
@@ -23,6 +33,11 @@
           "shared/sdk/**/*.{ts,tsx,js,jsx}",
           "shared/sdk/package.json"
         ]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/shared/sdk"
       }
     }
   }

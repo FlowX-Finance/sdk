@@ -2,7 +2,7 @@ import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 import { AddLiquidityV2 } from './AddLiquidityV2';
 
 describe('AddLiquidityV2', () => {
-  const network = 'testnet';
+  const network = 'mainnet';
   const suiClient = new SuiClient({
     url: getFullnodeUrl(network),
   });
@@ -14,7 +14,7 @@ describe('AddLiquidityV2', () => {
     const tx = await addLiquidityV2.buildTransaction(
       {
         x: '0x2::sui::SUI',
-        y: '0xea10912247c015ead590e481ae8545ff1518492dee41d6d03abdad828c1d2bde::usdc::USDC',
+        y: '0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN',
       },
       {
         x: '1000000000',

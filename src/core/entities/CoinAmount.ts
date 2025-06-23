@@ -36,6 +36,11 @@ export class CoinAmount<T extends Coin> extends Fraction {
     return new CoinAmount(coin, numerator, denominator);
   }
 
+  public static ONE<T extends Coin>(coin: T): CoinAmount<T> {
+    const oneAmount = new BN(10).pow(new BN(coin.decimals));
+    return new CoinAmount(coin, oneAmount);
+  }
+
   protected constructor(
     coin: T,
     numerator: BigintIsh,
@@ -87,7 +92,7 @@ export class CoinAmount<T extends Coin> extends Fraction {
 
   public override toFixed(
     decimalPlaces: number = this.coin.decimals,
-    format?: object,
+    format: object = { groupSeparator: '', decimalSeparator: '.' },
     rounding: Rounding = Rounding.ROUND_DOWN
   ): string {
     invariant(decimalPlaces <= this.coin.decimals, 'DECIMALS');
@@ -96,7 +101,9 @@ export class CoinAmount<T extends Coin> extends Fraction {
       .toFixed(decimalPlaces, format, rounding);
   }
 
-  public toExact(format: object = { groupSeparator: '' }): string {
+  public toExact(
+    format: object = { groupSeparator: '', decimalSeparator: '.' }
+  ): string {
     const BN = BigNumber.clone();
     BN.set({ DECIMAL_PLACES: this.coin.decimals });
     return new BN(this.quotient.toString())

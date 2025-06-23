@@ -1,8 +1,11 @@
 import { BN } from 'bn.js';
+import { Config } from './types';
 
 export const MODULE_UNIVERSAL_ROUTER = 'universal_router';
 
 export const MODULE_COMMISSION = 'commission';
+
+export const MODULE_COMMISSION_TYPE = 'commission_type';
 
 export enum Protocol {
   FLOWX_V2 = 'FLOWX',
@@ -12,6 +15,26 @@ export enum Protocol {
   CETUS = 'CETUS',
   AFTERMATH = 'AFTERMATH',
   DEEPBOOK = 'DEEPBOOK',
+  KRIYA_V3 = 'KRIYA_CLMM',
+  DEEPBOOK_V3 = 'DEEPBOOK_V3',
+  BLUEMOVE = 'BLUEMOVE',
+  BLUEFIN = 'BLUEFIN',
+  FLOWX_PMM = 'FLOWX_PMM',
+  BLUEMOVE_FUN = 'BLUEMOVE_FUN',
+  HOP_FUN = 'HOP_FUN',
+  SEVEN_K_FUN = '7K_FUN',
+  TURBOS_FUN = 'TURBOS_FUN',
+  OBRIC = 'OBRIC',
+  HAEDAL_PMM = 'HAEDAL_PMM',
+  HAEDAL = 'HAEDAL',
+  SPRING_SUI = 'SPRING_SUI',
+  ALPHA_FI = 'ALPHA_FI',
+  VOLO_LSD = 'VOLO_LSD',
+  AFTERMATH_LSD = 'AFTERMATH_LSD',
+  STEAMM = 'STEAMM',
+  METASTABLE = 'METASTABLE',
+  MAGMA_FINANCE = 'MAGMA_FINANCE',
+  MOMENTUM_FINANCE = 'MOMENTUM_FINANCE',
 }
 
 export enum CommissionType {
@@ -21,56 +44,72 @@ export enum CommissionType {
 
 export const BPS = new BN(1_000_000);
 
-export const CONFIGS = {
+export const CONFIGS: { [key: string]: Config } = {
   mainnet: {
     packageId:
-      '0x833a64724a500ad978480083c048ecc802fa5f6c59f622baf8b9531c3dfe8091',
+      '0xc263060d3cbb4155057f0010f92f63ca56d5121c298d01f7a33607342ec299b0',
+    packageIdOld:
+      '0xc263060d3cbb4155057f0010f92f63ca56d5121c298d01f7a33607342ec299b0',
     treasuryObjectId:
-      '0x4695a48a2793dcf38d5f572e3388b675bea7fefdd1e0160d00f6625f10926359',
+      '0x25db8128dc9ccbe5fcd15e5700fea555c6b111a8c8a1f20c426b696caac2bea4',
     tradeIdTrackerObjectId:
-      '0x1efc1043577126103876562c35018ca4f799bde6553f936aa15af5af52962a28',
+      '0x9ab469842f85fd2a1bac9ba695d867adb1caa7d5705809737922b5cee552eb6f',
     partnerRegistryObjectId:
-      '0x1a294f8e4d523ccb7d4b14dcc10f987de01925cd35e7a2d738518b82074835e2',
-    protocols: {
-      flowxV2: {
-        containerObjectId:
-          '0xb65dcbf63fd3ad5d0ebfbf334780dc9f785eff38a4459e37ab08fa79576ee511',
-      },
-      flowxV3: {
-        poolRegistryObjectId:
-          '0x27565d24a4cd51127ac90e4074a841bbe356cca7bf5759ddc14a975be1632abc',
-        versionedObjectId:
-          '0x67624a1533b5aff5d0dfcf5e598684350efd38134d2d245f475524c03a64e656',
-      },
-      cetus: {
-        globalConfigObjectId:
-          '0xdaa46292632c3c4d8f31f23ea0f9b36a28ff3677e9684980e4438403a67a3d8f',
-      },
-      turbos: {
-        packageId:
-          '0x91bfbc386a41afcfd9b2533058d7e915a1d3829089cc268ff4333d54d6339ca1',
-        versionedObjectId:
-          '0xf1cf0e81048df168ebeb1b8030fad24b3e0b53ae827c25053fff0779c1445b6f',
-      },
-      aftermath: {
-        poolRegistryObjectId:
-          '0xfcc774493db2c45c79f688f88d28023a3e7d98e4ee9f48bbf5c7990f651577ae',
-        protocolFeeVaultObjectId:
-          '0xf194d9b1bcad972e45a7dd67dd49b3ee1e3357a00a50850c52cd51bb450e13b4',
-        treasuryObjectId:
-          '0x28e499dff5e864a2eafe476269a4f5035f1c16f338da7be18b103499abf271ce',
-        insuranceFundObjectId:
-          '0xf0c40d67b078000e18032334c3325c47b9ec9f3d9ae4128be820d54663d14e3b',
-        referralVaultOjectId:
-          '0x35d35b0e5b177593d8c3a801462485572fc30861e6ce96a55af6dc4730709278',
-      },
-    },
+      '0x29e6c1c2176485dc045a2e39eb8844b4ca1cf8452d964447c11202f84a76cb1a',
+    versionedObjectId:
+      '0xada98dd9e028db64e206dd81fdecb3dbc8b4c16be08d9f175550032bfdcf56f3',
+    partnerCommissionCollectEvent:
+      '0xc263060d3cbb4155057f0010f92f63ca56d5121c298d01f7a33607342ec299b0::partner_manager::Collect',
     quoter: {
-      baseURI: 'https://api.flowx.finance/flowx-ag-routing/api/v1/quote',
+      singleQuoteURI: 'https://api.flowx.finance/flowx-ag-routing/api/v1/quote',
+      batchQuoteURI:
+        'https://api.flowx.finance/flowx-ag-routing/api/v1/batch-quotes',
       requestTimeout: 30000,
     },
     graphql: {
       baseURI: 'https://api.flowx.finance/flowx-be/graphql',
+    },
+    pyth: {
+      priceServiceEndpoint: 'https://hermes.pyth.network/v2',
+      stateObjectId:
+        '0x1f9310238ee9298fb703c3419030b35b22bb1cc37113e3bb5007c99aec79e5b8',
+    },
+    wormhole: {
+      stateObjectId:
+        '0xaeab97f96cf9877fee2883315d459552b2b921edc16d7ceac6eab944dd88919c',
+    },
+  },
+  testnet: {
+    packageIdOld:
+      '0xf055dc4f52856906c31aade424cbdd2a9aae827b4ea1fe7b9eb904d70e34ae60',
+    packageId:
+      '0xf055dc4f52856906c31aade424cbdd2a9aae827b4ea1fe7b9eb904d70e34ae60',
+    treasuryObjectId:
+      '0xfe423684ac5de04438a0f11e84e085ada4cf961c861ac65720b30a9c2e5c1c55',
+    tradeIdTrackerObjectId:
+      '0xa42c1eee22693aebe12c226519a958293c4a9b679e0dae84a8c37ed9709688e5',
+    partnerRegistryObjectId:
+      '0x8e7a2955e3898c296bf7b95dfef0b4d0c693e1018a6ef68ea9dc0ea1f2c6087f',
+    partnerCommissionCollectEvent:
+      '0xf055dc4f52856906c31aade424cbdd2a9aae827b4ea1fe7b9eb904d70e34ae60::partner_manager::Collect',
+    versionedObjectId:
+      '0x458a5128e93435f50e09d035ef7437f04dd8b931ca5ec7818d1b6b5c36a1bf79',
+    quoter: {
+      singleQuoteURI:
+        'https://flowx-dev.flowx.finance/flowx-ag-routing/api/v1/quote',
+      batchQuoteURI:
+        'https://flowx-dev.flowx.finance/flowx-ag-routing/api/v1/batch-quotes',
+      requestTimeout: 30000,
+    },
+    graphql: {
+      baseURI: 'https://flowx-dev.flowx.finance/flowx-be/graphql',
+    },
+    pyth: {
+      priceServiceEndpoint: '',
+      stateObjectId: '',
+    },
+    wormhole: {
+      stateObjectId: '',
     },
   },
 };

@@ -101,15 +101,19 @@ export class Coin {
     return coins;
   }
 
+  /**
+   * @deprecated use CoinWithBalance instead
+   */
   public async take(params: {
     owner: string;
     amount: BigintIsh;
     tx: Transaction;
     client: SuiClient;
+    isDevInspect?: boolean;
   }) {
-    const { owner, amount, tx, client } = params;
+    const { owner, amount, tx, client, isDevInspect } = params;
     const ownedCoins = await this.fetchAllOwnedCoins({
-      owner, 
+      owner,
       client,
     });
 
@@ -120,7 +124,7 @@ export class Coin {
 
     invariant(totalBalance.gte(new BN(amount.toString())), 'IF');
 
-    if (this.coinType === normalizeStructTag(SUI_TYPE_ARG)) {
+    if (this.coinType === normalizeStructTag(SUI_TYPE_ARG) && !isDevInspect) {
       tx.setGasPayment(
         ownedCoins.map((coin) => ({
           digest: coin.digest,

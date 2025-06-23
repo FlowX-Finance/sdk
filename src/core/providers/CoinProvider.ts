@@ -1,13 +1,17 @@
-import { sort } from 'd3';
+import _ from 'lodash';
+import CryptoJS from 'crypto-js';
+import { normalizeStructTag } from '@mysten/sui/utils';
+
 import { Coin } from '../entities';
 import { Pagination } from '../types/Pagination';
 import { Sortation } from '../types/Sortation';
 import { GraphqlProvider } from './GraphqlProvider';
-import { queryCoins } from './graphql/queryCoins';
+import { multiGetCoins, queryCoins } from './graphql/queryCoins';
 import { standardShortCoinType } from '../utils/standardShortCoinType';
 import { sdkCache } from '../cache';
-import _ from 'lodash';
-import CryptoJS from 'crypto-js';
+import { NETWORK } from '../constants';
+
+const CACHE_TTL = 60;
 
 export type CoinFilter = {
   isVerified?: boolean;
@@ -23,7 +27,7 @@ export interface ICoinProvider {
 export class CoinProvider implements ICoinProvider {
   public readonly graphqlProvider!: GraphqlProvider;
 
-  constructor(network: 'mainnet') {
+  constructor(network: NETWORK = 'mainnet') {
     this.graphqlProvider = new GraphqlProvider(network);
   }
 
@@ -80,5 +84,57 @@ export class CoinProvider implements ICoinProvider {
     });
 
     return listCoins;
+  }
+
+  async multiGetCoins(
+    coinTypes: string[],
+    refreshCache = false
+  ): Promise<Coin[]> {
+    const key = `MULTI_GET_COINS_${CryptoJS.MD5(
+      JSON.stringify(_.values(coinTypes))
+    )}`;
+
+    if (!refreshCache) {
+      const cached = sdkCache.get<Coin[]>(key);
+      if (cached) {
+        return cached;
+      }
+    }
+
+    const res: any = await this.graphqlProvider.client.request(multiGetCoins, {
+      coinTypes,
+    });
+    const coins = res.multiGetCoins.map(
+      (item: any) =>
+        new Coin(
+          item.type,
+          item.decimals,
+          item.symbol,
+          item.name,
+          item.description,
+          item.iconUrl,
+          item.markets.price,
+          '0',
+          item.isVerified
+        )
+    );
+    sdkCache.set(key, coins, CACHE_TTL);
+
+    return coins;
+  }
+
+  async multiGetPrices(
+    coinTypes: string[],
+    refreshCache = false
+  ): Promise<number[]> {
+    const coins = await this.multiGetCoins(coinTypes, refreshCache);
+    const mappingPrice = coins.reduce((memo: any, coin) => {
+      memo[coin.coinType] = Number(coin.derivedPriceInUSD);
+      return memo;
+    }, {});
+
+    return coinTypes.map(
+      (coinType) => mappingPrice[normalizeStructTag(coinType)] ?? 0
+    );
   }
 }

@@ -50,3 +50,20 @@ export const queryCoins = gql`
     }
   }
 `;
+
+export const multiGetCoins = gql`
+  query MultiGetCoins($coinTypes: [String!]!) {
+    multiGetCoins(coinTypes: $coinTypes) {
+      markets {
+        price
+      }
+      name
+      iconUrl
+      decimals
+      description
+      type
+      symbol
+      isVerified
+    }
+  }
+`;

@@ -120,7 +120,7 @@ export class Fraction {
 
   public toFixed(
     decimalPlaces: number,
-    format: object = { groupSeparator: '' },
+    format: object = { groupSeparator: '', decimalSeparator: '.' },
     rounding: Rounding = Rounding.ROUND_HALF_UP
   ): string {
     invariant(
