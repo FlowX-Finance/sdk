@@ -251,4 +251,29 @@ export class Trade<CInput extends Coin, COutput extends Coin> {
       return coinOut;
     }
   }
+
+  public async buildRoutes(params: {
+    tx: Transaction;
+    tradeObject: TransactionResult;
+    client: SuiClient;
+  }): Promise<void> {
+    const { tx, tradeObject } = params;
+
+    const pythHelper = PythHelper.getInstance({
+      client: params.client,
+      pythConfig: {
+        priceServiceEndpoint: CONFIGS[this.network].pyth.priceServiceEndpoint,
+        pythStateObjectId: CONFIGS[this.network].pyth.stateObjectId,
+        wormholeStateObjectId: CONFIGS[this.network].wormhole.stateObjectId,
+      },
+    });
+    const pythMap = await pythHelper.updatePythPriceFeedsIfNecessary(
+      this.routes,
+      tx
+    );
+
+    for (const route of this.routes) {
+      route.swap(tradeObject, new Percent(this.slippage, BPS), pythMap)(tx);
+    }
+  }
 }
